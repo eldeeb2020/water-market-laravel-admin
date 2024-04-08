@@ -16,5 +16,17 @@ Route::group([
     /// users routes
     $router->resource('users', UserController::class);
 
+    // end users route
+
+
+    ////// Customer Routes //////
+
+    $router->resource('customers', CustomerController::class);
+
+
+    ///// end Customer routes
+
+
+
 
 });

@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+//use Admin\Controllers\CustomerController;
+use App\Admin\Controllers\CustomerController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +20,31 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+//// test route
+
+Route::get('test', function () {
+    return 'hello world';
+});
+
+///end test route
+
+
+/// user api
+
+Route::middleware('auth:api')->get('test-customer', function (Request $request) {
+    return $request->user();
+});
+
+//// end user
+
+
+////// customers api
+
+Route::get('customers', [CustomerController::class,'allCustomers']);
+
+
+/////end customer api
+
+

@@ -13,20 +13,53 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
-    /// users routes
+    /// users routes  /////
+    
     $router->resource('users', UserController::class);
 
-    // end users route
+    // end users route *****
 
 
     ////// Customer Routes //////
 
     $router->resource('customers', CustomerController::class);
 
-
-    ///// end Customer routes
-
+    ///// end Customer routes ******
 
 
+
+    ///// Company Routes /////
+
+    $router->resource('companies', CompanyController::class);
+
+    ///// End Company Routes ********
+
+
+    ///// Item Routes ///////
+
+    $router->resource('items', ItemController::class);
+
+    ///// End Item Routes ******
+
+
+    ///// Order Routes ////////
+
+    $router->resource('orders', OrderController::class);
+
+    ///// End Order routes *******
+
+
+     ///// Category Routes  ///////
+
+   $router->resource('categories', CategoryController::class);
+
+   ////  End Category Routes *******
 
 });
+
+
+  
+
+
+
+

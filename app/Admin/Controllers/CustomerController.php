@@ -6,9 +6,12 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Customer;
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Encore\Admin\Layout\Content;
+use Illuminate\Support\Facades\Validator;
 use Encore\Admin\Controllers\AdminController;
+use Illuminate\Support\Facades\Auth;
+
 
 class CustomerController extends AdminController
 {
@@ -85,10 +88,38 @@ class CustomerController extends AdminController
         return $form;
     }
 
-    /// function to get a list of all the customers
+    /// method to get a list of all the customers
+    
     public function allCustomers(Content $content)
     {
         $customers = Customer::all();
         return response()->json(['customers' => $customers], 200);
+    }
+
+
+    /// customer login method
+
+    public function CustomerLogin(Request $request)
+    {
+        // Validate the request data
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        // Attempt to authenticate the user
+        if (Auth::guard('customer')->attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Authentication successful
+            $user = Auth::guard('customer')->user();
+            $token = $user->createToken('AuthToken')->accessToken;
+            return response()->json(['token' => $token], 200);
+        } else {
+            // Authentication failed
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
 }

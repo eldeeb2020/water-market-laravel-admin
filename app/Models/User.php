@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company_id'  // foreign key for the company
     ];
 
     /**
@@ -41,4 +42,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    // Relationship with Company model
+
+    public function company(){
+        return $this->belongsTo(Company::class); //one to one relationship
+    }
 }

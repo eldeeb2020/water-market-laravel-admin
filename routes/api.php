@@ -1,5 +1,8 @@
 <?php
 
+use App\Admin\Controllers\AuthController;
+
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 //use Admin\Controllers\CustomerController;
@@ -31,20 +34,22 @@ Route::get('test', function () {
 ///end test route
 
 
-/// user api
+/// user apis
 
 Route::middleware('auth:api')->get('test-customer', function (Request $request) {
     return $request->user();
 });
 
-//// end user
+//// end user apis
 
 
-////// customers api
+////// customers apis
 
-Route::get('customers', [CustomerController::class,'allCustomers']);
+Route::get('customers', [CustomerController::class,'allCustomers']); // to get all the customers in JSON format
+
+Route::post('/customer/login',[AuthController::class, 'CustomerLogin'])->name('customer.login');  // customer login route
 
 
-/////end customer api
+/////end customer apis
 
 

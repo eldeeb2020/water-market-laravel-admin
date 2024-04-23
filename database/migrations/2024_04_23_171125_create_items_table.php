@@ -17,8 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('category_id');  // Foreign key for category relationship
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade'); // Cascade deletions to delete all the items when the company deleted;  // Define foreign key constraint
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('admin_users')->onDelete('cascade');
+            $table->decimal('price', 10, 2);
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

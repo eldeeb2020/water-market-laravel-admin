@@ -44,6 +44,15 @@ return [
             'throw' => false,
         ],
 
+        'admin' => [
+            'driver' => 'local',
+            //'root' => storage_path('app/public'),
+            'root' => ('uploads'),
+            'url' => env('APP_URL').'uploads',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -56,10 +65,10 @@ return [
             'throw' => false,
         ],
 
-        'admin' => [
+        /*'admin' => [
             'driver' => 'local',
             'root' => storage_path('app/admin/files'),
-        ],
+        ],*/
 
     ],
 

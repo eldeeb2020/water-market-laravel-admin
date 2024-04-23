@@ -1,5 +1,7 @@
 <?php
 
+use Encore\Admin\Facades\Admin;
+
 /**
  * Laravel-admin - admin builder based on Laravel.
  * @author z-song <https://github.com/z-song>
@@ -17,5 +19,14 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+
+$u = Admin::user();
+
+/*if ($u != null){
+    if (count($u->roles)<1){
+        die ("Has no role");
+    }
+    dd($u->roles);
+}*/
 
 Encore\Admin\Form::forget(['map', 'editor']);

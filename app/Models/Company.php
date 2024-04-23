@@ -16,7 +16,7 @@ class Company extends Model
 
     public function user(){
         
-        return $this->hasOne(User::Class); // one to one relationship
+        return $this->hasOne(User::class); // one to one relationship
 
     } // end method
 

@@ -8,9 +8,11 @@ use Encore\Admin\Show;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Encore\Admin\Layout\Content;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Encore\Admin\Controllers\AdminController;
-use Illuminate\Support\Facades\Auth;
 
 
 class CustomerController extends AdminController
@@ -101,25 +103,110 @@ class CustomerController extends AdminController
 
     public function CustomerLogin(Request $request)
     {
-        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json($validator->errors(), 422);
         }
 
-        // Attempt to authenticate the user
-        if (Auth::guard('customer')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Authentication successful
-            $user = Auth::guard('customer')->user();
-            $token = $user->createToken('AuthToken')->accessToken;
-            return response()->json(['token' => $token], 200);
-        } else {
-            // Authentication failed
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $credentials = $request->only('email', 'password');
+
+        var_dump($credentials);
+
+        if (!Auth::guard('customer')->attempt($credentials)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
+
+        else{
+
+            var_dump($credentials);
+
+            $customer = Auth::guard('customer')->user();; // Get the authenticated customer
+
+            $token = $customer->createToken($customer->name);
+
+            
+            $token = $customer->createToken($customer->name); // used sanctum to generate token
+            return response()->json([
+                'message' => 'Customer logged in successfully!',
+                //'customer' => $customer->toArray(), // Optionally return user details
+                'token' => $token,
+
+            ]);
+
+        } 
+
+        /*$email = $request->input('email');
+        $password = $request->input('password');
+
+        $credentials = $request->only('email', 'password');
+        var_dump($credentials);
+
+        $customer = Customer::where('email', $email)->first();
+
+        if (! $customer) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        if (! Hash::check($password, $customer->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        } */
+        
     }
+
+
+    // Customer Register function using Api
+
+    public function CustomerRegister(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:customers',
+            'phone' => 'required|string',
+            'password' => 'required|string|min:4|confirmed',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $customer = new Customer();
+        $customer->name = $request->name;
+        $customer->email = $request->email;
+        $customer->phone = $request->phone;
+        $customer->password = password_hash($request->password, PASSWORD_DEFAULT);
+        $customer->save();
+
+        $token = $customer->createToken($customer->name);
+
+
+        return response()->json([
+            'message' => 'Customer registered successfully!',
+            'customer' => $customer->toArray(), // Optionally return customer data
+            'token' => $token,
+        ], 201); // Created status code
+
+    } // end method
+
+
+    /// customer logout method
+
+    public function CustomerLogout(Request $request){
+
+        //Auth::guard('customer')->logout();
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Customer loged out successfully'
+        ], 201);
+
+
+
+    } // end method
+
+    
 }

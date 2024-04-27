@@ -67,5 +67,11 @@ class CategoryController extends AdminController
         $form->text('description', __('Description'));
 
         return $form;
-    }
+    }// end method
+
+    public function GetAllCategories(){
+        $categories = Category::all();
+
+        return response()->json($categories);
+    } //end method
 }

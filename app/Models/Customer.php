@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Order;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 
 class Customer extends Model implements Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = [
         'name', 'email', 'phone', 'password',
@@ -19,6 +24,9 @@ class Customer extends Model implements Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    protected $guard = 'customer';
+
 
 
     // the relation between the customer and orders // one to many

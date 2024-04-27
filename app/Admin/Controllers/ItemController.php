@@ -115,5 +115,17 @@ class ItemController extends AdminController
 
 
         return $form;
+    } //
+
+    public function GetAvailableItems(){
+        $items = Item::paginate(10);
+        if ($items){
+            return response()->json($items);
+
+        }else{
+            return response()->json('no items');
+        }
     }
+
+
 }

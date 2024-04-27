@@ -1,11 +1,13 @@
 <?php
 
-use App\Admin\Controllers\AuthController;
-
-
 use Illuminate\Http\Request;
+
+
 use Illuminate\Support\Facades\Route;
-//use Admin\Controllers\CustomerController;
+use App\Admin\Controllers\AuthController;
+use App\Admin\Controllers\ItemController;
+use App\Admin\Controllers\OrderController;
+use App\Admin\Controllers\CategoryController;
 use App\Admin\Controllers\CustomerController;
 
 
@@ -45,11 +47,58 @@ Route::middleware('auth:api')->get('test-customer', function (Request $request) 
 
 ////// customers apis
 
-Route::get('customers', [CustomerController::class,'allCustomers']); // to get all the customers in JSON format
 
-Route::post('/customer/login',[AuthController::class, 'CustomerLogin'])->name('customer.login');  // customer login route
 
+Route::get('/auth/register', function(){
+    return view('auth.register');
+});
+
+Route::get('auth/login',function(){
+
+    return view('auth.login');
+})->name('auth.login');
+
+
+
+
+Route::post('customer/login',[CustomerController::class, 'CustomerLogin'])->name('customer.login');  // customer login route
+Route::post('customer/register', [CustomerController::class, 'CustomerRegister'])->name('register'); // customer sign up route
+
+
+
+// Protected routes for authenticated customers 
+
+Route::middleware(['auth:sanctum'])->group(function(){
+
+    Route::get('customer/profile', [CustomerController::class, 'CustomerProfile']);
+    Route::get('items', [ItemController::class, 'GetAvailableItems']);
+    Route::get('categories', [CategoryController::class, 'GetAllCategories']);
+    Route::post('place/order', [OrderController::class, 'PlaceOrder']);
+    Route::get('customer/logout', [CustomerController::class , 'CustomerLogout']);
+    Route::get('customer/orders', [OrderController::class , 'CustomerOrders']);
+
+
+});
+
+/*Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('customer/me', function (Request $request) {
+        $customer = $request->attributes->get('customer');
+        dd($customer);
+        return 'logged'; 
+    });
+    Route::get('items', [ItemController::class, 'GetAvailableItems']);
+    Route::get('categories', [CategoryController::class, 'GetAllCategories']);
+});*/
 
 /////end customer apis
 
+
+// test api
+
+/*Route::get('/customer/home', function(){
+    return view('customer.home');
+
+}); */
+
+//Route::get('customers', [CustomerController::class,'allCustomers']); // to get all the customers in JSON format
 

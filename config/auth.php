@@ -18,6 +18,11 @@ return [
         'passwords' => 'users',
     ],
 
+    /*'customer'=>[
+        'driver'=>'eloquent',
+        'model'=>App\Models\Customer::class,
+     ],*/
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
@@ -49,7 +54,8 @@ return [
 
         'customer' => [
             'driver' => 'session',
-            'provider' => 'customers',
+            'provider' => 'customers', // Default provider (assuming you use the database driver)
+            //'model' => App\Models\Customer::class, // Use your Customer model
         ],
     ],
 
@@ -108,6 +114,11 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
+        ],
+
+        'customers'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Models\Customer::class,
         ],
     ],
 

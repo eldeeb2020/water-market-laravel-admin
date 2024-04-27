@@ -15,32 +15,23 @@
     <h1 class = "text-center">Water Market</h1>
     <div class="row justify-content-center align-items-center" style="height:75vh;">
         <div class="col-md-6">
-        <h2 class = "text-center">Register</h2>
+        <h2 class = "text-center">Login</h2>
 
-            <form action="{{route('register')}}" method="POST">
+            <form action="{{route('customer.login')}}" method="POST">
                 @csrf
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
+                
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="integer" class="form-control" id="phone" name="phone" required>
-                </div>
+                
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-                <div class="form-group">
-                    <label for="password_confirmation">Confirm Password</label>
-                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                </div>
+                
                 <div class = "mt-5">
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
                 </div>
             </form>
         </div>

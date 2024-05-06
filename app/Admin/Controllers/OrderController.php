@@ -147,7 +147,7 @@ class OrderController extends AdminController
                     } 
                 }
 
-                $order->save(); // Save order again with the final total amount
+                $order->save(); //  to save the order again with the final total amount
 
         });
 

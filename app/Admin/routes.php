@@ -55,6 +55,13 @@ Route::group([
 
    ////  End Category Routes *******
 
+
+   ///// order-items routes /////////
+
+   $router->resource('order-items', Order_itemsController::class);
+
+   ///// end order-items routes *******
+
 });
 
 

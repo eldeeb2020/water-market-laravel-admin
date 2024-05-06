@@ -96,7 +96,12 @@ class CustomerController extends AdminController
     {
         $customers = Customer::all();
         return response()->json(['customers' => $customers], 200);
-    }
+    } // end method
+
+    public function CustomerProfile(){
+
+
+    } // end method
 
 
     /// customer login method

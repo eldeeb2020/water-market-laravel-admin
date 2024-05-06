@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\OrderItems;
+use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
@@ -28,6 +29,13 @@ class Item extends Model
 
         return $this->belongsTo(Administrator::class);
     } // end method
+
+
+    
+    public function orderitems(){
+        
+        return $this->hasMany(OrderItems::class);
+    }
 
 
 }

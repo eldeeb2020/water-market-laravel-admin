@@ -30,8 +30,10 @@ class ItemController extends AdminController
     {
         $grid = new Grid(new Item());
 
-        $grid->model()->where('company_id', Admin::user()->id); // Filter items by the current company ID
 
+        if (Admin::user()->isRole('company')){
+        $grid->model()->where('company_id', Admin::user()->id); // Filter items by the current company ID
+        };
 
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));

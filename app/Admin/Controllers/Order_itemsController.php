@@ -6,7 +6,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\OrderItems;
+use Encore\Admin\Widgets\Box;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Support\Facades\DB;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Controllers\AdminController;
 
 class Order_itemsController extends AdminController
@@ -109,5 +112,50 @@ class Order_itemsController extends AdminController
 
 
         return $form;
-    }
+    } //end method
+
+    public function TopSellingItmes(){
+
+        if (Admin::user()->isRole('company')){  
+
+        $topitems = OrderItems::select('item_id', DB::raw('SUM(quantity) as total_quantity_sold'))->where('company_id', Admin::user()->id)
+                            ->groupBy('item_id')
+                            ->orderByDesc('total_quantity_sold')
+                            ->take(5)
+                            ->get();
+
+        }
+
+        else{
+
+        $topitems = OrderItems::select('item_id', DB::raw('SUM(quantity) as total_quantity_sold'))
+                            ->groupBy('item_id')
+                            ->orderByDesc('total_quantity_sold')
+                            ->take(5)
+                            ->get();
+
+        }
+        
+        $chartdata = [                 
+        'labels' => $topitems->pluck('item.name')->toArray(),
+        'data' => $topitems->pluck('total_quantity_sold')->toArray(),
+
+        ];
+        $content = new Box('Top Selling Items', view('admin.charts.top_selling_items', compact('chartdata')));
+
+
+        return Admin::content(function (Content $content) use ($chartdata) {
+            $content->header('Top Selling Items');
+            $content->description('Top 5 sold items');
+    
+            // Display the chart
+            $content->row(view('admin.charts.top_selling_items', compact('chartdata')));
+
+            
+
+        });
+
+
+
+    } //end method 
 }

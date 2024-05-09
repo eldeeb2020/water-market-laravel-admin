@@ -2,11 +2,12 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Controllers\Controller;
-use Encore\Admin\Controllers\Dashboard;
+use Encore\Admin\Layout\Row;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Layout\Row;
+use App\Http\Controllers\Controller;
+use Encore\Admin\Controllers\Dashboard;
 
 class HomeController extends Controller
 {
@@ -30,5 +31,17 @@ class HomeController extends Controller
                     $column->append(Dashboard::dependencies());
                 });
             });
-    }
+    } // end method 
+
+    public function charts()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('chart');
+            $content->description('.....');
+
+            $content->body(view('admin.charts.bar'));
+        });
+        
+    } // end method
 }

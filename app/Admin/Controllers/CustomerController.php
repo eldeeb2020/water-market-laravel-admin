@@ -7,6 +7,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Encore\Admin\Widgets\Table;
 use Encore\Admin\Layout\Content;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
@@ -30,8 +31,6 @@ class CustomerController extends AdminController
      * @return Grid
      */
 
-    
-
 
 
     protected function grid()
@@ -42,9 +41,17 @@ class CustomerController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('email', __('Email'));
         $grid->column('phone', __('phone'));
-        $grid->column('password', __('Password'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('order' , __('Customer Orders'))->display(function ($order) {
+            $count = count($order);
+            return $count;
+        })->expand(function ($model) {
+
+            $orders = $model->order()->take(10)->get()->map(function ($orders) {
+                return $orders->only(['id', 'total_amount', 'order_date']);
+            });
+            return new Table(['Order ID', 'Total Amount', 'Order Date'], $orders->toArray());
+        });;
+        
 
         return $grid;
     }
@@ -85,8 +92,6 @@ class CustomerController extends AdminController
         $form->textarea('phone', __('Phone'));
         $form->textarea('password', __('Password'));
 
-
-
         return $form;
     }
 
@@ -114,7 +119,7 @@ class CustomerController extends AdminController
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json(['Message' => $validator->errors()->first()], 422);
         }
 
         $credentials = $request->only('email', 'password');
@@ -175,7 +180,7 @@ class CustomerController extends AdminController
         ]);
     
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
         $customer = new Customer();
@@ -201,15 +206,10 @@ class CustomerController extends AdminController
 
     public function CustomerLogout(Request $request){
 
-        //Auth::guard('customer')->logout();
-
         $request->user()->currentAccessToken()->delete();
-
         return response()->json([
             'message' => 'Customer loged out successfully'
         ], 201);
-
-
 
     } // end method
 

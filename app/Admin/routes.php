@@ -13,6 +13,13 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
+    ///// chart routes /////
+ 
+    $router->get('charts', 'HomeController@charts'); // chart route
+    $router->get('topitems', 'Order_itemsController@TopSellingItmes');
+
+    //// end chart routes *****
+
     /// users routes  /////
     
     $router->resource('users', UserController::class);

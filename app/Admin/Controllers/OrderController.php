@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Exception;
 use App\Models\Item;
 use App\Models\Order;
 use Encore\Admin\Form;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Encore\Admin\Controllers\AdminController;
+Use Encore\Admin\Widgets\Table;
+
 
 class OrderController extends AdminController
 {
@@ -33,26 +36,23 @@ class OrderController extends AdminController
     {
         $grid = new Grid(new Order());
 
-        // Eager load orderitems relationship for efficient retrieval
-        $grid->model()->with('orderitems');
-
-        // Filter by current company's ID through the orderitems relationship
-        $grid->model()->whereHas('orderitems', function ($query) {
-            $query->where('company_id', Admin::user()->id);
-        });
+        
 
         $grid->column('id', __('Id'));
-
-        $grid->column('orderitems.company_id', __('Company Id'));
-
         $grid->column('customer_id', __('Customer id'));
-        $grid->column('order_number', __('Order number'));
-        $grid->column('order_date', __('Order date'));
         $grid->column('total_amount', __('Total amount'));
-        $grid->column('status', __('Status'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('orderitems', __('Number of Order Items'))->display(function ($orderitems) {
+            $count = count($orderitems);
+            return $count;
+        })->expand(function ($model) {
 
+            $orderitems = $model->orderitems()->take(20)->get()->map(function ($orderitem) {
+                return $orderitem->only(['item_id', 'company_id', 'total_amount' , 'status']);
+            });
+            return new Table(['Item_id', 'Company_id', 'Total_amount' , 'Status'], $orderitems->toArray());
+        });
+        $grid->column('order_date', __('Order date'));
+       
         return $grid;
     }
 
@@ -86,11 +86,7 @@ class OrderController extends AdminController
     {
         $form = new Form(new Order());
 
-        $form->number('company_id', __('Company id'));
-        $form->text('order_number', __('Order number'));
-        $form->datetime('order_date', __('Order date'))->default(date('Y-m-d H:i:s'));
-        $form->decimal('total_amount', __('Total amount'));
-
+        
         return $form;
     } //end method
 
@@ -122,6 +118,11 @@ class OrderController extends AdminController
 
                 $order = new Order();        /// orders table
                 $order->customer_id = Auth::id();
+                $insufficientitems = $this->CheckItemQuantities($request->order_items);
+                if (count($insufficientitems) > 0){
+
+                    throw new Exception("Insufficient quantity for items: " . implode(', ', $insufficientitems));
+                }
                 $order->total_amount = $this->CalculateTotalOrderAmount($request->order_items);
                 $order->save();
 
@@ -154,12 +155,27 @@ class OrderController extends AdminController
         return response()->json('order placed successfully' , 200);
         }
         catch(Exception $e){
-            return response()->json($e);
+            return response()->json($e->getMessage(), 500);
         }
 
 
     
     } // end method
+
+    private function CheckItemQuantities($order_items)
+    {
+        $insufficient_items = [];
+        foreach ($order_items as $orderitem) {
+            $item_id = $orderitem['item_id'];
+            $quantity = $orderitem['quantity'];
+
+            $item = Item::where('id', $item_id)->first();
+            if ($item && $item->quantity < $quantity) {
+                $insufficient_items[] = $item_id;
+            }
+        }
+        return $insufficient_items;
+    } // end method 
 
     public function CalculateTotalOrderAmount($order_items)
     {

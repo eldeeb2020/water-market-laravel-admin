@@ -30,3 +30,6 @@ $u = Admin::user();
 }*/
 
 Encore\Admin\Form::forget(['map', 'editor']);
+
+Admin::js('/vendor/chartjs/dist/Chart.umd.js');
+

@@ -36,8 +36,6 @@ class OrderController extends AdminController
     {
         $grid = new Grid(new Order());
 
-        
-
         $grid->column('id', __('Id'));
         $grid->column('customer_id', __('Customer id'));
         $grid->column('total_amount', __('Total amount'));
@@ -50,6 +48,39 @@ class OrderController extends AdminController
                 return $orderitem->only(['item_id', 'company_id', 'total_amount' , 'status']);
             });
             return new Table(['Item_id', 'Company_id', 'Total_amount' , 'Status'], $orderitems->toArray());
+        });
+
+        $grid->column('test', __('Invoice'))->modal('Order Invoice', function ($model) {
+
+            $customer = $model->customer;
+            $orderitem = $model->orderitems;
+            $orderitems = $model->orderitems()->with('item.company')->get();
+
+            $customerdata = [
+               
+                [ $customer->name,
+                 $customer->phone],
+            ];
+        
+            // Initialize an empty array to hold the table data for order items
+            $orderitemdata = [
+                
+            ];
+        
+            // Loop through each order item to build the table rows
+            foreach ($orderitems as $orderitem) {
+                $orderitemdata[] = [
+                    $orderitem->item->name,
+                    $orderitem->status,
+                    $orderitem->item->company->name,
+                ];
+            }
+        
+
+            $customertable = new Table(['Customer Name', 'Customer Phone'], $customerdata);
+            $orderitemtable = new Table(['Item Name', 'Item Status', 'Company Name'], $orderitemdata);
+
+            return '<div style="text-align: center; font-size: 24px;">Customer Details</div><br>' . $customertable->render() . '<br><div style="text-align: center; font-size: 24px;">Order Details</div><br>' . $orderitemtable->render();
         });
         $grid->column('order_date', __('Order date'));
        

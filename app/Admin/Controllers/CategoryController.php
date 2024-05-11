@@ -70,7 +70,8 @@ class CategoryController extends AdminController
     }// end method
 
     public function GetAllCategories(){
-        $categories = Category::all();
+
+        $categories = Category::with('item')->get();
 
         return response()->json($categories);
     } //end method

@@ -7,7 +7,7 @@ $(function () {
         data: {
             labels: @json($chartdata['labels']),
             datasets: [{
-                label: '# of Votes',
+                label: '5 Items',
                 data: @json($chartdata['data']),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',

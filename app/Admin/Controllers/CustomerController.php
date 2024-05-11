@@ -105,6 +105,16 @@ class CustomerController extends AdminController
 
     public function CustomerProfile(){
 
+        $customer = auth()->user();
+        $orders = $customer->order()->with('orderitems')->get();
+        
+        if ($orders){
+
+            return response()->json($orders);
+        }
+        else{
+            return response()->json("You Have No Orders");
+        }
 
     } // end method
 
@@ -121,29 +131,23 @@ class CustomerController extends AdminController
         if ($validator->fails()) {
             return response()->json(['Message' => $validator->errors()->first()], 422);
         }
-
         $credentials = $request->only('email', 'password');
 
-        var_dump($credentials);
-
         if (!Auth::guard('customer')->attempt($credentials)) {
+
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         else{
 
-            var_dump($credentials);
-
             $customer = Auth::guard('customer')->user();; // Get the authenticated customer
 
             $token = $customer->createToken($customer->name);
-
             
             $token = $customer->createToken($customer->name); // used sanctum to generate token
             return response()->json([
                 'message' => 'Customer logged in successfully!',
-                //'customer' => $customer->toArray(), // Optionally return user details
-                'token' => $token,
+                'token' => $token->plainTextToken,
 
             ]);
 
@@ -165,7 +169,7 @@ class CustomerController extends AdminController
             return response()->json(['message' => 'Invalid credentials'], 401);
         } */
         
-    }
+    } // end method
 
 
     // Customer Register function using Api
@@ -195,7 +199,7 @@ class CustomerController extends AdminController
 
         return response()->json([
             'message' => 'Customer registered successfully!',
-            'customer' => $customer->toArray(), // Optionally return customer data
+            //'customer' => $customer->toArray(), // Optionally return customer data
             'token' => $token,
         ], 201); // Created status code
 

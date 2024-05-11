@@ -21,10 +21,11 @@ class OrderItems extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
-    }
+    } // end method
 
     public function item()
     {
         return $this->belongsTo(Item::class);
-    }
+        
+    } //end method
 }

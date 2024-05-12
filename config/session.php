@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'database' => env('SESSION_DRIVER', 'file'),
+    'redis' => env('SESSION_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
